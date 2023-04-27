@@ -1,0 +1,95 @@
+//conecta ao bd no planetscale
+//cria uma tabela no bd
+
+
+const Sequelize = require('sequelize')
+
+const sequelize = new Sequelize ('labmaker', 'dvnro7j8p202uj0mr97d' ,'pscale_pw_LZPlCm8eFOmj68Fgqbz2KnRwAF44DNOnjkJ1Rak5OAB' , { host: "aws.connect.psdb.cloud",
+dialect: "mysql",
+dialectOptions: {
+  ssl: {
+    rejectUnauthorized: true
+  },
+},
+
+})
+
+
+sequelize.authenticate().then(function() {
+  console.log("conectado com sucesso")
+}).catch(function(erro) {
+  console.log("falha ao conectar:" + erro)
+  
+})
+
+
+sequelize.getQueryInterface().showAllTables().then(function(tableNames) {
+  if (tableNames.includes('usuarios')) {
+    console.log('Tabela "usuarios" já existe');
+  } else {
+    // Definição do modelo para a tabela "usuarios"
+    const usuarios = sequelize.define('usuarios', {
+      id : {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+      },
+      nome: {
+        type: Sequelize.STRING
+      },
+      email_institucional: {
+        type: Sequelize.STRING
+      },
+      data_nascimento: {
+        type: Sequelize.DATE
+      },
+      escola_frequentada: {
+        type: Sequelize.STRING
+      },
+      ocupacao_institucional: {
+        type: Sequelize.STRING
+      },
+      periodo_escolar: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      senha: {
+        type: Sequelize.STRING
+      }
+    });
+
+    usuarios.sync().then(() => {
+      console.log("Tabela 'usuarios' criada com sucesso.");
+    }).catch((error) => {
+      console.log("Erro ao criar tabela 'usuarios':", error);
+    });
+  }
+}).catch((error) => {
+  console.log("Erro ao verificar se a tabela 'usuarios' já existe:", error);
+});
+
+
+// Função de inserção de dados na tabela "usuarios"
+async function inserirConta(dadosConta) {
+  try {
+    // Cria uma nova instância do modelo "usuarios" com os dados fornecidos
+    const novaConta = await usuarios.create(dadosConta);
+    console.log('Nova conta inserida:', novaConta.get());
+  } catch (erro) {
+    console.error('Falha ao inserir nova conta:', erro);
+  }
+}
+
+// Exemplo de uso da função de inserção de dados
+const dadosNovaConta = {
+  nome: 'Nome Completo',
+  email_institucional: 'email@institucional.com',
+  data_nascimento: '1990-01-01',
+  escola_frequentada: 'Escola XYZ',
+  ocupacao_institucional: 'discente',
+  periodo_escolar: 'fundamental',
+  senha: 'senha123'
+};
+
+inserirConta(dadosNovaConta);
