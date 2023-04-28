@@ -1,0 +1,72 @@
+const Sequelize = require('sequelize')
+
+const sequelize = new Sequelize ('labmaker', 'dvnro7j8p202uj0mr97d' ,'pscale_pw_LZPlCm8eFOmj68Fgqbz2KnRwAF44DNOnjkJ1Rak5OAB' , { host: "aws.connect.psdb.cloud",
+dialect: "mysql",
+dialectOptions: {
+  ssl: {
+    rejectUnauthorized: true
+  },
+},
+
+})
+
+
+sequelize.authenticate().then(function() {
+  console.log("conectado com sucesso")
+}).catch(function(erro) {
+  console.log("falha ao conectar:" + erro)
+  
+})
+
+
+//DATABASE_URL='mysql://dvnro7j8p202uj0mr97d:pscale_pw_LZPlCm8eFOmj68Fgqbz2KnRwAF44DNOnjkJ1Rak5OAB@aws.connect.psdb.cloud/labmaker?ssl={"rejectUnauthorized":true}'
+sequelize.getQueryInterface().showAllTables().then(function(tableNames) {
+  if (tableNames.includes('usuarios')) {
+    console.log('Tabela "usuarios" já existe');
+  } else{
+
+  // Definição do modelo para a tabela "usuarios"
+  const usuarios = sequelize.define('usuarios', {
+    id : {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true
+    },
+    nome: {
+      type: Sequelize.STRING
+    },
+    email_institucional: {
+      type: Sequelize.STRING
+    },
+    data_nascimento: {
+      type: Sequelize.DATE
+    },
+    escola_frequentada: {
+      type: Sequelize.STRING
+    },
+    ocupacao_institucional: {
+      type: Sequelize.STRING
+    },
+    periodo_escolar: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    senha: {
+      type: Sequelize.STRING
+    }
+  });
+
+sequelize.query("SHOW TABLES;", { type: sequelize.QueryTypes.SHOWTABLES })
+  .then(function(tables) {
+    if (tables.indexOf('usuarios') !== -1) {
+      console.log("Tabela 'usuarios' criada com sucesso.");
+    } else {
+      console.log("A tabela 'usuarios' não foi criada.");
+    }
+  })
+  .catch(function(err) {
+    console.log("Erro ao verificar se a tabela 'usuarios' foi criada:", err);
+  });
+}
+
