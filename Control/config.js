@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 
 
-const database = new Sequelize ('labmaker', 'dvnro7j8p202uj0mr97d' ,'pscale_pw_LZPlCm8eFOmj68Fgqbz2KnRwAF44DNOnjkJ1Rak5OAB' , { host: "aws.connect.psdb.cloud",
+const database = new Sequelize (DB, users ,password , { host: host,
 dialect: "mysql",
 dialectOptions: {
   ssl: {
